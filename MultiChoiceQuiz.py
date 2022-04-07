@@ -1,10 +1,13 @@
 """Multi Choice Quiz with just one question"""
 
+from multiprocessing.connection import answer_challenge
 from tkinter import *
 
 class MultiChoiceQuiz:
 
     def __init__(self, parent):
+        self.answers = []
+
         f1 = Frame(parent, bg = "#CFE2F3", height = 300, width = 300)
         f1.grid(column = 0, row = 0)
 
@@ -21,17 +24,34 @@ class MultiChoiceQuiz:
         choice = ["Vladivostok", "Astana", "Ulaanbaatar", "Lhasa"]
         self.choices = []
         for i in range(len(choice)):
-            self.choices.append(Radiobutton(f1, variable = self.v, value = choice[i], text = choice[i], bg = "#CFE2F3", command = self.answer))
+            self.choices.append(Radiobutton(f1, variable = self.v, value = choice[i], text = choice[i], bg = "#CFE2F3", command = self.configure_answer))
             self.choices[i].grid(column = 1, row = i+1, sticky = W, padx = 20)
 
         self.label3 = Label(f1, text = "", bg = "#CFE2F3")
         self.label3.grid(column = 0, row = 5)
 
-    def answer(self):
-        if self.v.get() == "Ulaanbaatar":
+        self.answers.append(Validate(self.v.get()))
+
+    def configure_answer(self):
+        answer = 0
+        v = Validate(answer)
+        if v.check_answer == True:
             self.label3.configure(text = "Correct!")
         else:
-            self.label3.configure(text = "Incorrect")
+            self.label3.configure(text = "*Incorrect")
+
+
+
+
+class Validate(MultiChoiceQuiz):
+    def __init__(self, answer):
+        self.answer = answer
+
+    def check_answer(self):
+        if self.answer == "Ulaanbaatar":
+            return True
+        else:
+            return False
 
 
 
@@ -42,6 +62,7 @@ if __name__ == "__main__":
     root = Tk()
     mcq = MultiChoiceQuiz(root)
     root.title("Multi Choice Quiz")
+
     root.mainloop()
 
 
